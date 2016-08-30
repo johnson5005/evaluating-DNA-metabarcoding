@@ -1,42 +1,40 @@
 # pollen-DNA-metabarcoding
-
-Appendix S1
 Evaluating the Relative Performance of DNA Metabarcoding Sequence Classifiers
 Rodney T. Richardson, Johan Bengtsson-Palme and Reed M. Johnson
 
-Table of Contents
-
-1. Introduction	2
-2. Retrieve data and filter by Ohio plant species list	2
-2.1 Obtain data from NCBI	2
-2.2 Preliminary formatting and quality curation	2
-2.3 Filter by geography	3
-3. Randomly sample testing sequences from training sequences	3
-4. Format reference sequences and train classifiers	4
-4.1 Format training sequences	4
-4.2 Train RDP classifier	5
-4.3 Train UTAX classifier	5
-4.4 Re-format references for RTAX classifier	5
-5. Format testing sequences	5
-5.1 Get sequence Gi numbers and use them to retrieve NCBI Taxonomy database lineages	5
-5.2 Replace Gi numbers in fasta with lineages	5
-5.3 Format sequences to facilitate later analyses	6
-6. Classify testing sequences	6
-6.1 Classify sequences using RDP	6
-6.2 Classify sequences using RTAX	6
-6.3 Classify sequences using UTAX	6
-7. Format classifier output and perform accuracy and sensitivity analysis	7
-7.1 Format RDP output	7
-7.2 Format RTAX output	8
-7.3 Format UTAX output	9
-7.4 Perform accuracy and sensitivity analysis	9
-8. Calculate DB coverage	9
-9. Isolate sequences with no genus level reference representation	9
-
-
+## Table of Contents
 1. Introduction
-This document contains the commands used for evaluation of classifier performance. These commands are provided such that readers can work through our analyses independently and apply the approach to their own research endeavors. It should be noted however that the syntax, commands and software used here may not be entirely transferrable for future applications given differences in computational architecture, software updates, etc. Further, these commands are given without guidance in terms of directory organization, which we leave at the discretion of the reader. Additionally, due to the ease of transferring commands from one analysis to another, we do not provide commands for all the analyses performed in the paper. Lastly, while these commands were performed on files representing five loci, for ease of organization we generally give only the commands used for the rbcL locus as an example.
 2. Retrieve data and filter by Ohio plant species list
+2.1 Obtain data from NCBI
+2.2 Preliminary formatting and quality curation
+2.3 Filter by geography
+3. Randomly sample testing sequences from training sequences
+4. Format reference sequences and train classifiers
+4.1 Format training sequences
+4.2 Train RDP classifier
+4.3 Train UTAX classifier
+4.4 Re-format references for RTAX classifier
+5. Format testing sequences
+5.1 Get sequence Gi numbers and use them to retrieve NCBI Taxonomy database lineages
+5.2 Replace Gi numbers in fasta with lineages
+5.3 Format sequences to facilitate later analyses
+6. Classify testing sequences
+6.1 Classify sequences using RDP
+6.2 Classify sequences using RTAX
+6.3 Classify sequences using UTAX
+7. Format classifier output and perform accuracy and sensitivity analysis
+7.1 Format RDP output
+7.2 Format RTAX output
+7.3 Format UTAX output
+7.4 Perform accuracy and sensitivity analysis
+8. Calculate DB coverage
+9. Isolate sequences with no genus level reference representation
+
+## 1. Introduction
+This document contains the commands used for evaluation of classifier performance. These commands are provided such that readers can work through our analyses independently and apply the approach to their own research endeavors. It should be noted however that the syntax, commands and software used here may not be entirely transferrable for future applications given differences in computational architecture, software updates, etc. Further, these commands are given without guidance in terms of directory organization, which we leave at the discretion of the reader. Additionally, due to the ease of transferring commands from one analysis to another, we do not provide commands for all the analyses performed in the paper. Lastly, while these commands were performed on files representing five loci, for ease of organization we generally give only the commands used for the rbcL locus as an example.
+
+2. Retrieve data and filter by Ohio plant species list
+
 2.1 Obtain data from NCBI
 ### search the following in NCBI
 •	ITS2 AND vascular plants [ORGN]
