@@ -1,4 +1,3 @@
-# Appendix S1
 
 ## Evaluating the Relative Performance of DNA Metabarcoding Sequence Classifiers
 
@@ -130,7 +129,7 @@ java -Xmx4g -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar
 
  move rbcL.properties, produced during training, from data directory to rdp_trained directory
 
-mv ./rbcL.properties ./rbcL_trained/rbcL.properties
+`mv ./rbcL.properties ./rbcL_trained/rbcL.properties`
 
 ## 4.3 Train UTAX classifier
 
@@ -138,21 +137,21 @@ mv ./rbcL.properties ./rbcL_trained/rbcL.properties
 
  reformat fasta headers from RDP format to UTAX format
 
-cat OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+)\tRoot;/>$1;tax=/g' | perl -pe 's/(.)__/$1:/g' | perl -pe 's/_\d+;/,/g' | perl -pe 's/,$/;/g' > rbcL.utax.fa
+`cat OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+)\tRoot;/>$1;tax=/g' | perl -pe 's/(.)__/$1:/g' | perl -pe 's/_\d+;/,/g' | perl -pe 's/,$/;/g' > rbcL.utax.fa`
 
  make UTAX training database
 
-~/PATH/TO/Usearch/usearch_v8.1 -makeudb_utax rbcL.utax.fa -output rbcL.udb
+`~/PATH/TO/Usearch/usearch_v8.1 -makeudb_utax rbcL.utax.fa -output rbcL.udb`
 
 ## 4.4 Re-format references for RTAX classifier
 
  reformat the taxonomic lineage headers of the RDP training fasta file to make a taxonomy file which meets the requirements of the RTAX classifier
 
-grep '>' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+)(\t)Root;/$1$2/g' | perl -pe 's/sub__/sub_/g' | perl -pe 's/.__/ /g' | perl -pe 's/_\d+//g' > rbcL_training.rtax.tax
+`grep '>' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+)(\t)Root;/$1$2/g' | perl -pe 's/sub__/sub_/g' | perl -pe 's/.__/ /g' | perl -pe 's/_\d+//g' > rbcL_training.rtax.tax`
 
  reformat RDP training fasta file for use with RTAX
 
-grep -A 1 '>' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+).*/>$1/g' > rbcL_training.rtax.fasta
+`grep -A 1 '>' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+).*/>$1/g' > rbcL_training.rtax.fasta`
 
 # 5\. Format testing sequences
 
@@ -160,18 +159,18 @@ grep -A 1 '>' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa | perl -pe 's/^>(\d+).*/>$1/
 
  get file of Gi numbers for each test sequence entry
 
-grep '>' OH_rbcL_TestSet.fasta | perl -pe 's/>(\d+).*/$1/g' > rbcL_test_ohio.gis
+`grep '>' OH_rbcL_TestSet.fasta | perl -pe 's/>(\d+).*/$1/g' > rbcL_test_ohio.gis`
 
  use Gi numbers along with the Perl script from Sickel et al. (2015) and the NCBI taxonomy module to get the taxonomic lineage of each entry
 
-perl ~/PATH/TO/RDP_Akenbrand/meta-barcoding-dual-indexing/code/gi2taxonomy.pl --gis rbcL_test_ohio.gis --out rbcL_test_ohio.tax --species rbcL_test_ohio.species.taxids --genus rbcL_test_ohio.genus.taxids
+`perl ~/PATH/TO/RDP_Akenbrand/meta-barcoding-dual-indexing/code/gi2taxonomy.pl --gis rbcL_test_ohio.gis --out rbcL_test_ohio.tax --species rbcL_test_ohio.species.taxids --genus rbcL_test_ohio.genus.taxids`
 
 
 
 ## 5.2 Replace Gi numbers in fasta with lineages
 
  use the following bash script to replace fasta Gi headers with the taxonomic lineage for each entry
-
+```
 #!/bin/bash
 
 cat rbcL_test_ohio.gis | while read Gi
@@ -183,11 +182,11 @@ grep -w "$Gi" rbcL_test_ohio.tax | perl -pe 's/(\d+)\tRoot;(.*)/>$1;$2/g' >> rbc
 grep -A 1 -w "$Gi" OH_rbcL_TestSet.fasta | grep -v '>' >> rbcL_test_RFMT.fasta  
 
         done
-
+```
 ## 5.3 Format sequences to facilitate later analyses
 
  remove taxonomically incomplete entries
-
+```
 sed -i '/undef/,+1 d' rbcL_test_RFMT.fasta  
 
 sed -i '/ sp/,+1 d' rbcL_test_RFMT.fasta  
@@ -197,30 +196,30 @@ sed -i '/incertae/,+1 d' rbcL_test_RFMT.fasta  
 sed -i '/incerti/,+1 d' rbcL_test_RFMT.fasta  
 
 sed -i '/unknown/,+1 d' rbcL_test_RFMT.fasta  
-
+```
 # 6\. Classify testing sequences
 
 ## 6.1 Classify sequences using RDP
 
  replace tabs in header with “-“ so classifier doesn't delete the characters after the space.
 
-grep -A 1 '>' rbcL_test_RFMT.fasta | perl -pe 's/         /-/g' > rbcL_test_rdpFMT.fasta
+`grep -A 1 '>' rbcL_test_RFMT.fasta | perl -pe 's/         /-/g' > rbcL_test_rdpFMT.fasta`
 
-java -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar classify -t ~/PATH/TO/rbcL.properties --outputFile rbcL.rdp.output rbcL_test_rdpFMT.fasta
+`java -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar classify -t ~/PATH/TO/rbcL.properties --outputFile rbcL.rdp.output rbcL_test_rdpFMT.fasta`
 
 ## 6.2 Classify sequences using RTAX
 
  replace “;” with “–“ in header so that whole lineage is retained in RTAX output
 
-grep -A 1 '>' rbcL_test_RFMT.fasta | perl -pe 's/;/-/g' > rbcL_test_rtaxFMT.fasta
+`grep -A 1 '>' rbcL_test_RFMT.fasta | perl -pe 's/;/-/g' > rbcL_test_rtaxFMT.fasta`
 
  classify sequences
 
-~/PATH/TO/rtax -r rbcL_training.rtax.fasta -t rbcL_training.rtax.tax -a rbcL_rtaxFMT.fasta -o rbcL.rtax.output
+`~/PATH/TO/rtax -r rbcL_training.rtax.fasta -t rbcL_training.rtax.tax -a rbcL_rtaxFMT.fasta -o rbcL.rtax.output`
 
 ## 6.3 Classify sequences using UTAX
 
-~/local/src/Usearch/usearch_v8.1 -utax rbcL_test_RFMT.fasta -db ~/PATH/TO/rbcL.udb -rdpout rbcL.utax.output -strand plus
+`~/local/src/Usearch/usearch_v8.1 -utax rbcL_test_RFMT.fasta -db ~/PATH/TO/rbcL.udb -rdpout rbcL.utax.output -strand plus`
 
 # 7\. Format classifier output and perform accuracy and sensitivity analysis
 
@@ -228,14 +227,14 @@ grep -A 1 '>' rbcL_test_RFMT.fasta | perl -pe 's/;/-/g' > rbcL_test_rtaxFMT.fast
 
  replace '\t-\t' with '\t' and replace tabs with commas
 
-cat rbcL.rdp.output | perl -pe 's/(\t)-(\t)/$1/g' | perl -pe 's/\t/,/g' | perl -pe 's/,,/,/g' | perl -pe 's/([a-z])-([a-z])/$1 $2/g' > rbcL_clean.rdp.output
+`cat rbcL.rdp.output | perl -pe 's/(\t)-(\t)/$1/g' | perl -pe 's/\t/,/g' | perl -pe 's/,,/,/g' | perl -pe 's/([a-z])-([a-z])/$1 $2/g' > rbcL_clean.rdp.output`
 
 
 
  replace RDP assignments with less than 90% bootstrap support with “NULL” using the following bash script (this facilitates later analysis in R)
 
 
-
+```
 #!/bin/bash
 
  this for loop can be applied to all five loci if all testing sequences have been classified
@@ -371,12 +370,12 @@ echo {$ACTUAL_LINEAGE,$K,$P,$C,$O,$F,$G,$S}_FINAL >> ${i}_RDP_OUTPUT
 done
 
 done
-
+```
 
 
  miscellaneous reformatting to ensure that taxonomic values in the header (the actual taxonomic identity) match the values in the RDP assignments (the predicted identity)
 
-cat rbcL_RDP_OUTPUT | perl –pe ‘s/NULL/NULL,NULL,NULL/g’ | perl -pe 's/(\d) ([a-z])/$1,$2/gi' | perl -pe 's/NULL ([a-z]+)/NULL,$1/gi' | perl -pe 's/([a-z]+) NULL/$1,NULL/gi' > rbcL_RDP_FINAL
+`cat rbcL_RDP_OUTPUT | perl –pe ‘s/NULL/NULL,NULL,NULL/g’ | perl -pe 's/(\d) ([a-z])/$1,$2/gi' | perl -pe 's/NULL ([a-z]+)/NULL,$1/gi' | perl -pe 's/([a-z]+) NULL/$1,NULL/gi' > rbcL_RDP_FINAL`
 
 
 
@@ -384,7 +383,7 @@ cat rbcL_RDP_OUTPUT | perl –pe ‘s/NULL/NULL,NULL,NULL/g’ | perl -pe 's/(\d
 
  miscellaneous reformatting to ensure that taxonomic values in the header (the actual taxonomic identity) match the values in the RTAX assignments (the predicted identity)
 
-cat rbcL.rtax.output | perl -pe 's/(\d+)-(.__)/$1,$2/g' | perl -pe 's/\t/,/g' | perl -pe 's/sub__/sub_/g' | perl -pe 's/.__//g' | perl -pe 's/_\d+//g' | perl -pe 's/([a-z])-([a-z])/$1 $2/g' | perl -pe 's/, /,/g' | perl -pe 's/-//g' > rbcL_RTAX_FINAL
+`cat rbcL.rtax.output | perl -pe 's/(\d+)-(.__)/$1,$2/g' | perl -pe 's/\t/,/g' | perl -pe 's/sub__/sub_/g' | perl -pe 's/.__//g' | perl -pe 's/_\d+//g' | perl -pe 's/([a-z])-([a-z])/$1 $2/g' | perl -pe 's/, /,/g' | perl -pe 's/-//g' > rbcL_RTAX_FINAL`
 
 
 
@@ -394,7 +393,7 @@ cat rbcL.rtax.output | perl -pe 's/(\d+)-(.__)/$1,$2/g' | perl -pe 's/\t/,/g' | 
 
  miscellaneous reformatting to ensure that taxonomic values in the header (the actual taxonomic identity) match the values in the UTAX assignments (the predicted identity)
 
-cat rbcL.utax.output | perl -pe 's/(\t)-(\t)/$1/g' | perl -pe 's/\t/,/g' | perl -pe 's/,,/,/g' | perl -pe 's/([a-z])-([a-z])/$1 $2/g' > rbcL_UTAX_output
+`cat rbcL.utax.output | perl -pe 's/(\t)-(\t)/$1/g' | perl -pe 's/\t/,/g' | perl -pe 's/,,/,/g' | perl -pe 's/([a-z])-([a-z])/$1 $2/g' > rbcL_UTAX_output`
 
 
 
@@ -404,17 +403,17 @@ cat rbcL.utax.output | perl -pe 's/(\t)-(\t)/$1/g' | perl -pe 's/\t/,/g' | perl 
 
  further reformatting for later analysis
 
-cat rbcL_UTAX_OUTPUT | perl -pe 's/(\d) ([a-z])/$1,$2/gi' | perl -pe 's/NULL ([a-z]+)/NULL,$1/gi' | perl -pe 's/([a-z]+) NULL/$1,NULL/gi' | perl -pe 's/sub__/sub_/g' | perl -pe 's/.__//g' | perl -pe 's/_\d+//g' > rbcL_UTAX_FINAL
+`cat rbcL_UTAX_OUTPUT | perl -pe 's/(\d) ([a-z])/$1,$2/gi' | perl -pe 's/NULL ([a-z]+)/NULL,$1/gi' | perl -pe 's/([a-z]+) NULL/$1,NULL/gi' | perl -pe 's/sub__/sub_/g' | perl -pe 's/.__//g' | perl -pe 's/_\d+//g' > rbcL_UTAX_FINAL`
 
 ## 7.4 Perform accuracy and sensitivity analysis
 
  isolate classified sequences to determine sensitivity in R (the example given is for RTAX at the genus level but this would have to be changed for other ranks and classifiers)
 
-genus_assigned <- as.data.frame(rbcL_RTAX_FINAL[which(rbcL_RTAX_FINAL $V23 != 'NULL'),c(7,23)])
+`genus_assigned <- as.data.frame(rbcL_RTAX_FINAL[which(rbcL_RTAX_FINAL $V23 != 'NULL'),c(7,23)])`
 
  compare testing sequence taxonomy with classifier predicted taxonomy to isolate mis-classifications in R
 
-genus_misIDs <- as.data.frame(rbcL_RTAX_FINAL[which(as.character(rbcL_RTAX_FINAL$V7) != as.character(rbcL_RTAX_FINAL$V15) & as.character(rbcL_RTAX_FINAL$V15) != 'NULL'),c(7,15)])
+`genus_misIDs <- as.data.frame(rbcL_RTAX_FINAL[which(as.character(rbcL_RTAX_FINAL$V7) != as.character(rbcL_RTAX_FINAL$V15) & as.character(rbcL_RTAX_FINAL$V15) != 'NULL'),c(7,15)])`
 
  visually analyze the resulting data frames to ensure that the correct columns were compared and that there are no obviously confounding artifacts in the data
 
@@ -422,17 +421,17 @@ genus_misIDs <- as.data.frame(rbcL_RTAX_FINAL[which(as.character(rbcL_RTAX_FINAL
 
  Obtain lists of genera from Ohio and both the training sets and the testing sets
 
-cat OhioSpecies.txt | cut -d' ' -f1 | sort | uniq > rbcL_Ohio_genera
+`cat OhioSpecies.txt | cut -d' ' -f1 | sort | uniq > rbcL_Ohio_genera`
 
-cat rbcL_test_ohio.tax | perl -pe 's/.*;g__([a-z]+)_\d+;.*/$1/gi’ | sort | uniq  > rbcL_test_genera
+`cat rbcL_test_ohio.tax | perl -pe 's/.*;g__([a-z]+)_\d+;.*/$1/gi’ | sort | uniq  > rbcL_test_genera`
 
-cat rbcL_train_ohio.tax | perl -pe 's/.*;g__([a-z]+)_\d+;.*/$1/gi' | sort | uniq > rbcL_train_genera
+`cat rbcL_train_ohio.tax | perl -pe 's/.*;g__([a-z]+)_\d+;.*/$1/gi' | sort | uniq > rbcL_train_genera`
 
  import these to excel and save as .csv
 
  use %in% function in R to find overlap of genera lists
 
-rbcL_test_train <- as.data.frame(rbcL_test[which(rbcL_test[,1] %in% rbcL_train[,1]),1])
+`rbcL_test_train <- as.data.frame(rbcL_test[which(rbcL_test[,1] %in% rbcL_train[,1]),1])`
 
 
 
@@ -440,4 +439,4 @@ rbcL_test_train <- as.data.frame(rbcL_test[which(rbcL_test[,1] %in% rbcL_train[,
 
  find genera present in the testing set but not in the training set
 
-grep -v -f rbcL_train_genera rbcL_test_genera > rbcL_in_test_not_train
+`grep -v -f rbcL_train_genera rbcL_test_genera > rbcL_in_test_not_train`
