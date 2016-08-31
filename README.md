@@ -1,66 +1,8 @@
-Appendix S1
+# Appendix S1
 
-Evaluating the Relative Performance of DNA Metabarcoding Sequence Classifiers
+## Evaluating the Relative Performance of DNA Metabarcoding Sequence Classifiers
 
-Rodney T. Richardson, Johan Bengtsson-Palme and Reed M. Johnson
-
-Table of Contents
-
-[1\. Introduction](#h.gjdgxs)[        ](#h.gjdgxs)
-
-[2\. Retrieve data and filter by Ohio plant species list](#h.30j0zll)[        ](#h.30j0zll)
-
-[2.1 Obtain data from NCBI](#h.1fob9te)[        ](#h.1fob9te)
-
-[2.2 Preliminary formatting and quality curation](#h.3znysh7)[        ](#h.3znysh7)
-
-[2.3 Filter by geography](#h.2et92p0)[        ](#h.2et92p0)
-
-[3\. Randomly sample testing sequences from training sequences](#h.tyjcwt)[        ](#h.tyjcwt)
-
-[4\. Format reference sequences and train classifiers](#h.3dy6vkm)[        ](#h.3dy6vkm)
-
-[4.1 Format training sequences](#h.1t3h5sf)[        ](#h.1t3h5sf)
-
-[4.2 Train RDP classifier](#h.4d34og8)[        ](#h.4d34og8)
-
-[4.3 Train UTAX classifier](#h.2s8eyo1)[        ](#h.2s8eyo1)
-
-[4.4 Re-format references for RTAX classifier](#h.17dp8vu)[        ](#h.17dp8vu)
-
-[5\. Format testing sequences](#h.3rdcrjn)[        ](#h.3rdcrjn)
-
-[5.1 Get sequence Gi numbers and use them to retrieve NCBI Taxonomy database lineages](#h.26in1rg)[        ](#h.26in1rg)
-
-[5.2 Replace Gi numbers in fasta with lineages](#h.lnxbz9)[        ](#h.lnxbz9)
-
-[5.3 Format sequences to facilitate later analyses](#h.35nkun2)[        ](#h.35nkun2)
-
-[6\. Classify testing sequences](#h.1ksv4uv)[        ](#h.1ksv4uv)
-
-[6.1 Classify sequences using RDP](#h.44sinio)[        ](#h.44sinio)
-
-[6.2 Classify sequences using RTAX](#h.z337ya)[        ](#h.z337ya)
-
-[6.3 Classify sequences using UTAX](#h.3j2qqm3)[        ](#h.3j2qqm3)
-
-[7\. Format classifier output and perform accuracy and sensitivity analysis](#h.1y810tw)[        ](#h.1y810tw)
-
-[7.1 Format RDP output](#h.4i7ojhp)[        ](#h.4i7ojhp)
-
-[7.2 Format RTAX output](#h.1ci93xb)[        ](#h.1ci93xb)
-
-[7.3 Format UTAX output](#h.2bn6wsx)[        ](#h.2bn6wsx)
-
-[7.4 Perform accuracy and sensitivity analysis](#h.3as4poj)[        ](#h.3as4poj)
-
-[8\. Calculate DB coverage](#h.1pxezwc)[        ](#h.1pxezwc)
-
-[9\. Isolate sequences with no genus level reference representation](#h.49x2ik5)[        ](#h.49x2ik5)
-
-[](#_Toc453838845)
-
-[](#_Toc453838845)
+### Rodney T. Richardson, Johan Bengtsson-Palme and Reed M. Johnson
 
 # 1\. Introduction
 
