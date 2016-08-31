@@ -1,4 +1,4 @@
-<span class="c4 c0 c22">Appendix S1</span>
+###<span class="c4 c0 c22">Appendix S1</span>
 
 <span class="c12 c24 c0">Evaluating the Relative Performance of DNA Metabarcoding Sequence Classifiers</span>
 
