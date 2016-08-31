@@ -66,33 +66,29 @@ This document contains the commands used for evaluation of classifier performanc
 
  remove next line instances which were added during blast database usage
 
-awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}' < GenBank_rbcL_030416.fasta > GenBank_rbcL_030416_rmNL.fasta
+`awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}' < GenBank_rbcL_030416.fasta > GenBank_rbcL_030416_rmNL.fasta`
 
 # 3\. Randomly sample testing sequences from training sequences
 
  sample the headers from 15% of the sequences to serve as the testing set
 
-awk 'BEGIN {srand()} !/^$/ { if (rand() <= .15) print $0}' < OH_GB_030416_rbcL.txt > OH_GB_030416_rbcL_TestSet.txt
+`awk 'BEGIN {srand()} !/^$/ { if (rand() <= .15) print $0}' < OH_GB_030416_rbcL.txt > OH_GB_030416_rbcL_TestSet.txt`
 
  use reverse grep to get headers of sequences which were not sampled for the testing set
 
-grep -v -f OH_GB_030416_rbcL_TestSet.txt OH_GB_030416_rbcL.txt > OH_GB_030416_rbcL_TrainSet.txt
-
-
-
-
+`grep -v -f OH_GB_030416_rbcL_TestSet.txt OH_GB_030416_rbcL.txt > OH_GB_030416_rbcL_TrainSet.txt`
 
  make a fasta file with the header and sequence for the testing set entries
 
-grep -A 1 -f OH_GB_030416_rbcL_TestSet.txt OH_Spcs_rbcL_400_1500bp_CLEAN_2.fasta > OH_rbcL_TestSet.fasta
+`grep -A 1 -f OH_GB_030416_rbcL_TestSet.txt OH_Spcs_rbcL_400_1500bp_CLEAN_2.fasta > OH_rbcL_TestSet.fasta`
 
  make a fasta file with the header and sequence for the training set entries
 
-grep -A 1 -f OH_GB_030416_rbcL_TrainSet.txt OH_Spcs_rbcL_200_800bp_CLEAN_2.fasta > OH_rbcL_TrainSet.fasta
+`grep -A 1 -f OH_GB_030416_rbcL_TrainSet.txt OH_Spcs_rbcL_200_800bp_CLEAN_2.fasta > OH_rbcL_TrainSet.fasta`
 
  delete grep “--” artifact
 
-sed -i '/--/d' OH_rbcL_*Set.fasta
+`sed -i '/--/d' OH_rbcL_*Set.fasta`
 
 # 4\. Format reference sequences and train classifiers
 
@@ -100,25 +96,25 @@ sed -i '/--/d' OH_rbcL_*Set.fasta
 
  get Gi numbers from training sequences
 
-grep '>' OH_rbcL_TrainSet.fasta | perl -pe 's/>(\d+).*/$1/g' > rbcL_ohio.gis
+`grep '>' OH_rbcL_TrainSet.fasta | perl -pe 's/>(\d+).*/$1/g' > rbcL_ohio.gis`
 
  use the following two Perl scripts provided in Sickel at al. (2015) and the NCBI Taxonomy module to produce required taxonomy and fasta files for later use with RDP and UTAX. See https://github.com/iimog/meta-barcoding-dual-indexing for the Perl scripts and instructions on installing the taxonomy module
 
-perl ~/PATH/TO/RDP_Akenbrand/meta-barcoding-dual-indexing/code/gi2taxonomy.pl --gis rbcL_ohio.gis --out rbcL_ohio.tax --species rbcL_ohio.species.taxids --genus rbcL_ohio.genus.taxids
+`perl ~/PATH/TO/RDP_Akenbrand/meta-barcoding-dual-indexing/code/gi2taxonomy.pl --gis rbcL_ohio.gis --out rbcL_ohio.tax --species rbcL_ohio.species.taxids --genus rbcL_ohio.genus.taxids`
 
-perl ~/PATH/TO/RDP_Akenbrand/meta-barcoding-dual-indexing/code/tax2rdp_utax.pl rbcL_ohio.tax OH_rbcL_TrainSet.fasta OH_rbcL_trainRDP
+`perl ~/PATH/TO/RDP_Akenbrand/meta-barcoding-dual-indexing/code/tax2rdp_utax.pl rbcL_ohio.tax OH_rbcL_TrainSet.fasta OH_rbcL_trainRDP`
 
  remove duplicate sequences
 
-java -Xmx4g -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar rm-dupseq --infile OH_rbcL_trainRDP.rdp.fa --outfile OH_rbcL_trainRDP.rmDS.rdp.fa --duplicates --min_seq_length 50
+`java -Xmx4g -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar rm-dupseq --infile OH_rbcL_trainRDP.rdp.fa --outfile OH_rbcL_trainRDP.rmDS.rdp.fa --duplicates --min_seq_length 50`
 
  remove partial sequences
 
-java -Xmx4g -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar rm-partialseq OH_rbcL_trainRDP.rdp.fa OH_rbcL_trainRDP.rmDS.rdp.fa OH_rbcL_trainRDP.FinalTrainSet.rdp.fa --alignment-mode overlap --min_gaps 50 --knn 20
+`java -Xmx4g -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar rm-partialseq OH_rbcL_trainRDP.rdp.fa OH_rbcL_trainRDP.rmDS.rdp.fa OH_rbcL_trainRDP.FinalTrainSet.rdp.fa --alignment-mode overlap --min_gaps 50 --knn 20`
 
  remove entries with incomplete taxonomy data
-
-sed -i '/undef/,+1 d' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa
+```
+sed -i '/undef/,+1 d' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa`
 
 sed -i '/ sp/,+1 d' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa
 
@@ -127,7 +123,7 @@ sed -i '/incertae/,+1 d' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa
 sed -i '/incerti/,+1 d' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa
 
 sed -i '/unknown/,+1 d' OH_rbcL_trainRDP.FinalTrainSet.rdp.fa
-
+```
 ## 4.2 Train RDP classifier
 
 java -Xmx4g -jar ~/PATH/TO/RDP_Akenbrand/rdp_classifier_2.11/dist/classifier.jar train --out_dir rbcL_trained --seq OH_rbcL_trainRDP.FinalTrainSet.rdp.fa --tax_file OH_rbcL_trainRDP.rdp.tax
