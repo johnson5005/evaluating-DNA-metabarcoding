@@ -303,7 +303,7 @@ else
 
 P_FINAL=$(echo $LINE | cut -d',' -f8,9,10)
 
-firbcL_0.5DB_OUT
+fi
 
 if [ $C_VAL \< 0.90 ]
 
@@ -319,7 +319,7 @@ fi
 
 if [ $O_VAL \< 0.90 ]
 
-thenmatK_Test_OUTPUT
+then
 
 O_FINAL=NULL
 
