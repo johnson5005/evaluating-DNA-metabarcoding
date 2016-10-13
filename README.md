@@ -1,5 +1,5 @@
 
-## Evaluating the Relative Performance of DNA Metabarcoding Sequence Classifiers
+### Evaluating and Optimizing the Performance of Software Commonly Used for the Taxonomic Classification of DNA Metabarcoding Sequence Data
 
 ### Rodney T. Richardson, Johan Bengtsson-Palme and Reed M. Johnson
 
