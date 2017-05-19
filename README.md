@@ -42,7 +42,7 @@ This document contains the commands used for evaluation of classifier performanc
 *   200 – 800 bp for trnH
 
  use python script to remove sequences with more than two consecutive uncalled base pairs (save as python executable script and run from command line: python remove_NNN_script.py file.fasta)
-
+```
 #!/usr/bin/env python
 import sys
 iname = sys.argv[1]
@@ -72,7 +72,7 @@ for key in new:
         seq = str(new[key])
         o.write("%s\n%s\n" % (fkey, seq[2:-2]))
 o.close()
-
+```
 ## 2.3 Filter by geography
 
  get Gi numbers from NCBI entries for species found in Ohio (OhioSpecies.txt file is provided in Appendix S2). It should be noted that this approach to filtering the sequences is conservative as only one sequence representative per species is retained. Furthermore, one should be aware of that there could be naming inconsistencies between the list of species used for filtering and, e.g., the NCBI naming convention. Thus, this step should only be carried out if relevant for the questions investigated.
